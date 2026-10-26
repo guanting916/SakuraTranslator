@@ -1,176 +1,98 @@
-# SakuraTranslator 臺灣繁體修改版
+# SakuraTranslator 臺灣繁體版
 
-此 Fork 基於 [fkiliver/SakuraTranslator](https://github.com/fkiliver/SakuraTranslator)，目前來源版本識別為 **0.3.10-tw.1**。透過 **GPT6.1 SOL** 協助整理修改、建置與驗證。
+基於 [fkiliver/SakuraTranslator](https://github.com/fkiliver/SakuraTranslator) 的翻譯端點插件，為 **Sakura 1.0** 加入臺灣繁體中文提示與回覆轉換。使用者需另行安裝 XUnity.AutoTranslator，並啟動相容的翻譯 API 服務。
 
-## 本 Fork 新增內容
+目前版本：**v0.3.10-tw.1 Pre-release**。本專案透過 **GPT6.1 SOL** 協助修改、建置與驗證。
 
-- Sakura 1.0 的 system／user 改為臺灣繁體中文，保留換行與空白行。
-- 回傳內容使用 OpenCC 1.1.9 字典進行臺灣繁體轉換，保留文字標記及占位符。
-- 保留術語表與生成參數，其他模型模板維持上游原樣。
-- 加入可指定 XUnity 組件位置的建置腳本及本機模擬 API 測試。
+## 修改內容
 
-修改源自先前本機保存的原始碼，已和指定的既有 DLL 核對提示詞與內嵌字典。完整差異及驗證範圍見 [FORK-CHANGES.md](FORK-CHANGES.md)，重建步驟見 [BUILDING.md](BUILDING.md)。
+| 部分 | 功能 |
+|---|---|
+| Sakura 1.0 的 system／user | 要求模型翻譯成臺灣繁體中文，保留原文換行與空白行。一般翻譯及術語表兩種分支皆套用。 |
+| 回覆後處理 | 使用 OpenCC 1.1.9 `s2twp` 字典，將回覆中的簡體字與部分用語轉成臺灣繁體。 |
+| 文字格式 | 轉換時保留尖括號標記、花括號占位符與換行。 |
+| 建置與測試 | 可指定 XUnity 參考組件位置，附有字詞、格式、提示詞及模擬 API 驗證程式。 |
 
-目前沒有建立此 Fork 的 Release；上游 Release 裡的 DLL 不包含本 Fork 的修改。自行建置時，Mono 與 IL2CPP 分別使用正確的 XUnity 參考組件，不能混用輸出。
+提示詞是在生成前要求模型使用繁體；OpenCC 是收到回覆後補做字形與臺灣用語轉換。模型已輸出繁體時，多數文字會保持原樣，但部分用語仍可能調整。這項轉換不會修正人稱、主詞或原文理解錯誤。
 
-此端點本身不收集對話前文；對話來源選取、姓名及 LOG 由獨立的 [TextSourceInspector](https://github.com/guanting916/TextSourceInspector) 處理。
+**上述提示與轉換僅套用 Sakura 1.0。**其他 Sakura／GalTransl 模板、術語表機制與生成參數維持上游原有行為。本版本沒有獨立的 OpenCC 啟用／停用設定。
 
-## 第三方資料與授權
+## 1. 下載前先確認環境
 
-OpenCC 字典及原作者資訊見 [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt) 與 [OpenCC-LICENSE.txt](OpenCC-LICENSE.txt)，字典按 Apache-2.0 保留授權。這不代表 SakuraTranslator 上游全部程式碼自動改採 Apache-2.0 或 MIT；上游及其他依賴適用其自身授權情況。
+- 已安裝適用該遊戲的 BepInEx 與 XUnity.AutoTranslator。本次建置使用 XUnity **5.6.2** 的對應組件。
+- 已啟動 Sakura 相容的 chat completions API；本專案不包含模型或伺服器。
+- 確認遊戲是 Mono 或 IL2CPP，兩版 DLL 不可混用。
 
----
+| 環境 | 下載檔案 |
+|---|---|
+| BepInEx 5 Mono | `SakuraTranslate.dll` |
+| BepInEx 6 IL2CPP | `SakuraTranslate_IL2CPP.dll` |
 
-以下保留上游使用說明；其中官方 Release、預設提示詞及版本描述不等同於本 Fork 修改版。
+## 2. 安裝
 
-<div align="center">
-<h1>
-  SakuraTranslator
-</h1>
-</div>
+1. 到本 Fork 的 [v0.3.10-tw.1 Release](https://github.com/guanting916/SakuraTranslator/releases/tag/v0.3.10-tw.1)，從 **Assets** 下載對應的一份 DLL。一般安裝不需下載 Source code 或自行編譯。
+2. 關閉遊戲，將舊版 SakuraTranslate DLL 移到遊戲目錄外備份，避免同時載入多份端點。
+3. 把下載的 DLL 放入遊戲內 XUnity 的 `Translators` 資料夾。BepInEx 套件通常位於：
 
-# 介绍
-这是一个基于XUnity.AutoTranslator和Sakura模型的Unity游戏本地翻译器，能够提供高质量离线日文翻译  
-建议使用[GalTransl-V3翻译模型](https://huggingface.co/SakuraLLM/Sakura-GalTransl-7B-v3)，当前支持版本为Sakura v0.9/v0.10/v1.0，GalTransl v2.6/v3
-
-## TODO
-- [ ] 添加历史上文（搁置，难以将对话文本与ui文本区分，需要更好的规则）
-- [x] 添加退化检测
-- [x] 重新整理对不同模型的支持
-
-## 详细部署流程
-如果你不了解AutoTraslator，请从头阅读部署教程：详见[本仓库wiki](https://github.com/fkiliver/SakuraTranslator/wiki)  
-
-
-# 快速开始
-
-## 启动Sakura服务
-此处以本地部署为例  
-确保Sakura服务器成功启动并监听`http://127.0.0.1:8080` (端口根据你的启动方式而定，但要配置文件与之保持一致)
-
-## 修改配置文件
-### 安装SakuraTranslator
-从 [Releases](https://github.com/fkiliver/SakuraTranslator/releases) 下载`SakuraTranslate.dll`放置在Translators文件夹内
- - 如果你使用ReiPatcher，你应该放在`{游戏目录}\{游戏名}_Data\Managed\Translators`
- - 如果你使用BepInEx，你应该放在`{游戏目录}\BepInEx\plugins\XUnity.AutoTranslator\Translators`
-
-### 配置SakuraTranslator
-启动一次游戏，这时应当会自动生成配置文件  
-修改AutoTranslator的配置文件  
- - 如果你使用ReiPatcher，配置文件应该在`{游戏目录}\AutoTranslator\Config.ini`
- - 如果你使用BepInEx，配置文件应该在`{游戏目录}\BepInEx\config\AutoTranslatorConfig.ini`
-
-首先修改配置文件前两个字段为
+```text
+遊戲資料夾/
+├── Game.exe
+└── BepInEx/
+    ├── plugins/
+    │   └── XUnity.AutoTranslator/
+    │       └── Translators/
+    │           └── 對應的 SakuraTranslate DLL
+    └── config/
+        └── AutoTranslatorConfig.ini
 ```
+
+`Game.exe` 與「對應的 SakuraTranslate DLL」是示意名稱。若原套件資料夾結構不同，請使用其既有 `Translators` 位置，不要任意移動 XUnity 本身。
+
+## 3. 設定
+
+首次啟動遊戲產生設定後關閉，開啟 `BepInEx/config/AutoTranslatorConfig.ini`，修改既有檔案內的對應項目，不要只用以下片段覆蓋整份設定：
+
+```ini
 [Service]
 Endpoint=SakuraTranslate
-FallbackEndpoint=
 
 [General]
-Language=zh
+Language=zh-TW
 FromLanguage=ja
-```
-如果你在使用中出现了缺字、方块字等情况，请指定外部字体：
-```
-[Behaviour]
-OverrideFont= ##填写你系统中已安装的字体名
-OverrideFontTextMeshPro=arialuni_sdf_u2018 ##或arialuni_sdf_u2019
-```
-其中arialuni_sdf_u201x可以从[字体文件](https://github.com/bbepis/XUnity.AutoTranslator/releases/download/v5.4.5/TMP_Font_AssetBundles.zip)获取，请解压后直接放置在游戏根目录  
-部分游戏`OverrideFontTextMeshPro`可能无效，可以尝试使用`FallbackFontTextMeshPro`  
-此外，若出现不翻译、翻译缺失格式等问题，可尝试修改`MaxCharactersPerTranslation`和`IgnoreWhitespaceInDialogue`选项
 
-### 完整配置示例
-```
 [Sakura]
 Endpoint=http://127.0.0.1:8080/v1/chat/completions
 ModelName=Sakura
 ModelVersion=1.0
-MaxTokensMode=Dynamic
-StaticMaxTokens=512
-DynamicMaxTokensMultiplier=1.5
-DictMode=MatchOriginalText
-Dict={"想太":["想太","男主人公"],"ダイヤ":["戴亚","女"]}
-FixDegeneration=True
-MaxConcurrency=1
-EnableShortDelay=True
-DisableSpamChecks=False
-TemperatureOverride=
-TopPOverride=
-Debug=False
 ```
 
-### 支持的模型及对应关系
-对应参数为`ModelName`和`ModelVersion`，对应关系如下表，其中`*`表示没有匹配时的默认值
+API 位址需與你實際啟動的服務一致；上面的本機 8080 埠只是例子。儲存設定後重新啟動遊戲。`ModelName`／`ModelVersion` 需如上設定，才會使用本版修改的 Sakura 1.0 模板及繁體轉換。
 
-| ModelName    | ModelVersion | TranslationModel        |
-|--------------|--------------|-------------------------|
-| Sakura       | 0.9          | Sakura v0.9             |
-| Sakura       | 0.10         | Sakura v0.10            |
-| Sakura       | 1.0          | Sakura v1.0             |
-| Sakura       | *            | Sakura v1.0 (默认)      |
-| GalTransl    | 2.6          | GalTransl v2.6          |
-| GalTransl    | 3            | GalTransl v3            |
-| GalTransl    | *            | GalTransl v3 (默认)     |
-| *            | *            | Sakura v1.0 (默认)      |
+OpenCC 字典已內嵌在 DLL，不需額外安裝 OpenCC，也不需複製字典到遊戲目錄。本專案不附字型檔；若有缺字，需另處理字型設定。
 
-模型默认值为Sakura 1.0  
-需要将`Endpoint`设置为chat completions api（例：`http://127.0.0.1:8080/v1/chat/completions`）  
+## 4. 對話上下文與 LOG
 
-### MaxTokens模式及退化检测配置
-- `MaxTokensMode`
-  - `Static`（默认）：使用`StaticMaxTokens`的值作为发送给llama.cpp的`max_tokens`
-  - `Dynamic`：使用原文的字符数乘以`DynamicMaxTokensMultiplier`向上取整作为发送给llama.cpp的`max_tokens`，最小`max_tokens`为`10`
-  - 设置为`Dynamic`有助于在模型退化时减少检测时间
-- `StaticMaxTokens`：静态MaxTokens值，默认`512`
-- `DynamicMaxTokensMultiplier`：动态MaxTokens乘以原文字符数的倍数，默认`1.5`
-- `FixDegeneration`
-  - `False`（默认）：关闭退化检测功能
-  - `True`：开启退化检测功能，当模型生成的token数等于传递给llama.cpp的`max_tokens`时，将`frequency_penalty`增加至`0.2`重新生成，若仍然失败则使用最后获取的结果
+這個端點本身不選取文字元件或收集對話歷史。若要對話前文、姓名配對及詳細請求 LOG，可另外使用 [TextSourceInspector](https://github.com/guanting916/TextSourceInspector)。
 
-### 字典配置
-#### 字典配置项
-- `DictMode`
-  - `None`（默认）：关闭字典功能（注：Sakura 0.9不支持字典，启用字典功能时也不会传递字典）
-  - `Full`：传递整个字典
-  - `MatchOriginalText`：传递当前翻译句子包含的字典部分
-#### 字典配置（Dict）
-- `Dict`默认为空字符串，必须为空或合法的Json格式，解析失败将会视为空
-- 字典格式`{"src":["dst","info"]}`，发给sakura的字典为`src->dst #info`
-- 其中`info`没有可以写成`{"src":["dst"]}`或者`{"src":"dst"}`，此时发给sakura的字典为`src->dst`
-- 示例：`{"たちばな":"橘","橘":["橘"],"あやの":["绫乃","女"],"綾乃":["绫乃","女"]}`
+單獨使用此端點時，可在 `BepInEx/LogOutput.log` 查看載入或連線錯誤。XUnity 已有的翻譯快取不會因更換 DLL 自動重翻。
 
-### 并发配置
-- `MaxConcurrency`：同时发送的翻译请求数，默认为`1`
-- 单卡多线程总体翻译速度一般比单线程高，llama.cpp需要设置`-np`参数（可使用`llama-batched-bench`测试）
+## 常見問題
 
-### 快速翻译配置 :warning:
-- **注意：仅建议在本地部署的情况下使用**
-- `EnableShortDelay`
-  - `False`（默认）：AutoTranslator默认的翻译延迟
-  - `True`：设置翻译延迟为0.1秒（AutoTranslator允许的最小值）
-- `DisableSpamChecks`
-  - `False`（默认）：开启AutoTranslator的Spam检测
-  - `True`：关闭Spam检测
+- **完全沒有翻譯**：確認 API 已啟動、網址正確、DLL 類型符合環境，以及 `[Service] Endpoint=SakuraTranslate`。
+- **沒有使用繁體規則**：確認裝的是本 Fork 的 DLL，且 `ModelName=Sakura`、`ModelVersion=1.0`，並檢查是否讀到舊快取。
+- **換行或人稱仍翻錯**：提示詞只是要求模型遵守；字詞轉換不能修正所有模型錯誤。
+- **專有名詞被轉換**：OpenCC 採用字典的候選詞，可能影響名稱或特定用語；請檢查回覆。本版沒有獨立關閉轉換的設定。
+- **更換版本或還原**：先關閉遊戲，只保留一份 Sakura 端點 DLL，換回備份後再啟動。
 
-### Temperature和TopP覆盖设置
-- `TemperatureOverride`：覆盖模型默认的temperature值（可选，留空使用模型默认值）
-  - 不同模型的默认temperature值：
-	- Sakura系列：0.1
-	- GalTransl v2.6：0.2
-	- GalTransl v3：0.3
-- `TopPOverride`：覆盖模型默认的top_p值（可选，留空使用模型默认值）
-  - 不同模型的默认top_p值：
-	- Sakura系列：0.3
-	- GalTransl系列：0.8
+## 開發與驗證
 
-## 启动游戏
-完成所有配置后，请删除第一次启动时产生的翻译文件
- - 如果你使用ReiPatcher，翻译文件应该在`{游戏目录}\AutoTranslator\Translation`
- - 如果你使用BepInEx，翻译文件应该在`{游戏目录}\BepInEx\Translation`
+修改位置與範圍見 [FORK-CHANGES.md](FORK-CHANGES.md)，自行建置與測試見 [BUILDING.md](BUILDING.md)。這是本機建置的 Pre-release，不代表所有 Unity、模型及端點環境都已驗證。
 
-现在你可以开始游戏了
+組件版本維持 `0.3.10.0`，檔案版本為 `0.3.10.1`，資訊版本含 `0.3.10-tw.1` 與來源 commit；相同組件版本號不代表 DLL 內容完全相同。
 
-![image](https://github.com/fkiliver/SakuraTranslator/assets/48873439/ffba161d-8d0c-4a0e-bd15-71ab95db30ef)
+## 來源與第三方授權
 
-![image](https://github.com/fkiliver/SakuraTranslator/assets/48873439/ffba161d-8d0c-4a0e-bd15-71ab95db30ef)
+- 上游：[fkiliver/SakuraTranslator](https://github.com/fkiliver/SakuraTranslator)。保留原專案歷史；[上游原始說明](UPSTREAM-README.md)僅作參考，其 Release 不包含本 Fork 修改。
+- 字典：[OpenCC](https://github.com/BYVoid/OpenCC) 1.1.9，來源與原作者資訊見 [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt)，授權全文見 [OpenCC-LICENSE.txt](OpenCC-LICENSE.txt)。
+
+OpenCC 字典按 Apache-2.0 保留授權；這不代表 SakuraTranslator 上游程式碼或其他依賴自動改採 Apache-2.0 或 MIT。

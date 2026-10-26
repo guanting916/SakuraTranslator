@@ -13,17 +13,17 @@
 - 保留術語表內容與原有生成參數。
 - 其他 Sakura／GalTransl 模板保持上游原樣。
 
-這份模板以指定的本機 DLL 實際內建文字為準。2026-09-28 保存的另一份來源含有額外的字面 `\n` 指令，本次沒有把這項後續差異混入重建。
+提示規則同時涵蓋一般翻譯與術語表分支，原文作為當前文本傳送。
 
 ## 繁體轉換
 
-找回 2026-09-28 保存的 `TaiwanChineseConverter.cs`，移入可版本管理的專案。
+新增受版本管理的 `TaiwanChineseConverter.cs`，在模型回覆後執行字詞轉換。
 
 - 依 OpenCC 1.1.9 `s2twp` 字典階段進行轉換，優先使用第一個字典候選。
 - 字典以內嵌資源載入，不需額外啟動原生 OpenCC。
 - 保留尖括號標記、花括號占位符、實際換行及補充平面字元。
 - 只在 Sakura 1.0 的回覆流程中，於原有 Unescape／FixTranslationEnd 後、`context.Complete` 前執行。
-- 六份字典及內嵌授權文字已與現有 DLL 的資源逐一核對，內容完全一致。
+- 六份 OpenCC 字典及授權文字以內嵌資源保存，跨平台取出原始碼時不自動改寫其換行位元組。
 
 OpenCC 字典的 Apache-2.0 授權及來源資訊見 `OpenCC-LICENSE.txt`、`THIRD-PARTY-NOTICES.txt`。
 
