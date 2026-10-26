@@ -1,8 +1,8 @@
 # SakuraTranslator 臺灣繁體版
 
-基於 [fkiliver/SakuraTranslator](https://github.com/fkiliver/SakuraTranslator) 的翻譯端點插件，為 **Sakura 1.0** 加入臺灣繁體中文提示與回覆轉換。使用者需另行安裝 XUnity.AutoTranslator，並啟動相容的翻譯 API 服務。
+本專案基於 [fkiliver/SakuraTranslator](https://github.com/fkiliver/SakuraTranslator) 的翻譯端點插件，為 **Sakura 1.0** 加入臺灣繁體中文提示與回覆轉換。使用者需另行安裝 XUnity.AutoTranslator，並啟動相容的翻譯 API 服務。
 
-目前版本：**v0.3.10-tw.1 Pre-release**。本專案透過 **GPT6.1 SOL** 協助修改、建置與驗證。
+程式透過 **GPT6.1 SOL** 協助修改、建置與驗證。
 
 ## 修改內容
 
@@ -12,12 +12,6 @@
 | 回覆後處理 | 使用 OpenCC 1.1.9 `s2twp` 字典，將回覆中的簡體字與部分用語轉成臺灣繁體。 |
 | 文字格式 | 轉換中文字時，保留遊戲的文字顏色設定、玩家名字代號與原本的分行。 |
 | 建置與測試 | 可指定 XUnity 參考組件位置，附有字詞、格式、提示詞及模擬 API 驗證程式。 |
-
-例如，`<color=red>欢迎</color>` 只會把「欢迎」轉成「歡迎」，不改動顏色設定；`{player_name}` 是遊戲填入玩家名字的代號，也會保持原樣。原本分成兩行的文字，經字詞轉換後仍分成兩行。
-
-提示詞是在生成前要求模型使用繁體；OpenCC 是收到回覆後補做字形與臺灣用語轉換。模型已輸出繁體時，多數文字會保持原樣，但部分用語仍可能調整。這項轉換不會修正人稱、主詞或原文理解錯誤。
-
-**上述提示與轉換僅套用 Sakura 1.0。**其他 Sakura／GalTransl 模板、術語表機制與生成參數維持上游原有行為。本版本沒有獨立的 OpenCC 啟用／停用設定。
 
 ## 1. 下載前先確認環境
 
@@ -33,8 +27,7 @@
 ## 2. 安裝
 
 1. 到本 Fork 的 [v0.3.10-tw.1 Release](https://github.com/guanting916/SakuraTranslator/releases/tag/v0.3.10-tw.1)，從 **Assets** 下載對應的一份 DLL。一般安裝不需下載 Source code 或自行編譯。
-2. 關閉遊戲，將舊版 SakuraTranslate DLL 移到遊戲目錄外備份，避免同時載入多份端點。
-3. 把下載的 DLL 放入遊戲內 XUnity 的 `Translators` 資料夾。BepInEx 套件通常位於：
+2. 把下載的 DLL 放入遊戲內 XUnity 的 `Translators` 資料夾。BepInEx 套件通常位於：
 
 ```text
 遊戲資料夾/
