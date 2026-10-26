@@ -1,4 +1,4 @@
-﻿using SakuraTranslate.Models;
+using SakuraTranslate.Models;
 using System.Collections.Generic;
 using XUnity.AutoTranslator.Plugin.Core.Endpoints;
 
@@ -13,7 +13,7 @@ namespace SakuraTranslate
                 new PromptMessage
                 {
                     Role = "system",
-                    Content = "你是一个轻小说翻译模型，可以流畅通顺地以日本轻小说的风格将日文翻译成简体中文，并联系上下文正确使用人称代词，不擅自添加原文中没有的代词。"
+                    Content = "你是一个轻小说翻译模型，可以流畅通顺地以日本轻小说的风格将日文翻译成臺灣繁體中文，并联系上下文正确使用人称代词，不擅自添加原文中没有的代词。請逐行翻譯，保留原文的換行與空白行，譯文各行須與原文逐行對應，不得合併行、刪除換行或新增換行。"
                 }
             };
 
@@ -25,7 +25,7 @@ namespace SakuraTranslate
                 messages.Add(new PromptMessage
                 {
                     Role = "user",
-                    Content = $"将下面的日文文本翻译成中文：{originalText}"
+                    Content = $"将下面的日文文本翻译成臺灣繁體中文，保留原文的換行與空白行，不得合併行或新增換行：{originalText}"
                 });
             }
             else
@@ -34,7 +34,7 @@ namespace SakuraTranslate
                 {
                     Role = "user",
                     Content = $"根据以下术语表（可以为空）：\n{dictStr}\n" +
-                          $"将下面的日文文本根据对应关系和备注翻译成中文：{originalText}"
+                          $"将下面的日文文本根据对应关系和备注翻译成臺灣繁體中文，保留原文的換行與空白行，不得合併行或新增換行：{originalText}"
                 });
             }
 

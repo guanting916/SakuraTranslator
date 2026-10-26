@@ -1,0 +1,16 @@
+OpenCC (Open Chinese Convert)
+Author: Carbo Kuo <byvoid@byvoid.com> and OpenCC contributors.
+Source: https://github.com/BYVoid/OpenCC
+Release: ver.1.1.9
+Commit: 556ed22496d650bd0b13b6c163be9814637970ae
+License: Apache License, Version 2.0; see OpenCC-LICENSE.txt.
+
+The following upstream data files are embedded without modification in SakuraTranslate.dll:
+STPhrases.txt, STCharacters.txt, TWPhrasesIT.txt, TWPhrasesName.txt,
+TWPhrasesOther.txt, TWVariants.txt.
+The OpenCC license is also embedded as SakuraTranslate.Resources.OpenCC.LICENSE.txt.
+
+TaiwanChineseConverter.cs is a new managed C# implementation for .NET 3.5,
+following OpenCC longest-prefix segmentation and the s2twp conversion stages.
+It additionally preserves angle-bracket markup and brace placeholders.
+The package does not distribute or require the native OpenCC executable/library.

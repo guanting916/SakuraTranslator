@@ -61,3 +61,7 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+# Preserve embedded OpenCC dictionary and license bytes across platforms.
+SakuraTranslate/Resources/OpenCC/*.txt -text
+OpenCC-LICENSE.txt -text

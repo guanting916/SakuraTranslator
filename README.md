@@ -1,3 +1,28 @@
+# SakuraTranslator 臺灣繁體修改版
+
+此 Fork 基於 [fkiliver/SakuraTranslator](https://github.com/fkiliver/SakuraTranslator)，目前來源版本識別為 **0.3.10-tw.1**。透過 **GPT6.1 SOL** 協助整理修改、建置與驗證。
+
+## 本 Fork 新增內容
+
+- Sakura 1.0 的 system／user 改為臺灣繁體中文，保留換行與空白行。
+- 回傳內容使用 OpenCC 1.1.9 字典進行臺灣繁體轉換，保留文字標記及占位符。
+- 保留術語表與生成參數，其他模型模板維持上游原樣。
+- 加入可指定 XUnity 組件位置的建置腳本及本機模擬 API 測試。
+
+修改源自先前本機保存的原始碼，已和指定的既有 DLL 核對提示詞與內嵌字典。完整差異及驗證範圍見 [FORK-CHANGES.md](FORK-CHANGES.md)，重建步驟見 [BUILDING.md](BUILDING.md)。
+
+目前沒有建立此 Fork 的 Release；上游 Release 裡的 DLL 不包含本 Fork 的修改。自行建置時，Mono 與 IL2CPP 分別使用正確的 XUnity 參考組件，不能混用輸出。
+
+此端點本身不收集對話前文；對話來源選取、姓名及 LOG 由獨立的 [TextSourceInspector](https://github.com/guanting916/TextSourceInspector) 處理。
+
+## 第三方資料與授權
+
+OpenCC 字典及原作者資訊見 [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt) 與 [OpenCC-LICENSE.txt](OpenCC-LICENSE.txt)，字典按 Apache-2.0 保留授權。這不代表 SakuraTranslator 上游全部程式碼自動改採 Apache-2.0 或 MIT；上游及其他依賴適用其自身授權情況。
+
+---
+
+以下保留上游使用說明；其中官方 Release、預設提示詞及版本描述不等同於本 Fork 修改版。
+
 <div align="center">
 <h1>
   SakuraTranslator

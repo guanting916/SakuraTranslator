@@ -1,4 +1,4 @@
-﻿using SakuraTranslate.Helpers;
+using SakuraTranslate.Helpers;
 using SimpleJSON;
 using System.Collections;
 using System.IO;
@@ -91,6 +91,10 @@ namespace SakuraTranslate
 
             translatedText = JsonHelper.Unescape(translatedText);
             translatedText = TranslationHelper.FixTranslationEnd(untranslatedText, translatedText);
+            if (_modelType == Models.TranslationModel.SakuraV1_0)
+            {
+                translatedText = TaiwanChineseConverter.Convert(translatedText);
+            }
 
             if (_debug) { XuaLogger.AutoTranslator.Debug($"SakuraTranslate.Translate: translatedText: {translatedText}"); }
 
